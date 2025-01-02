@@ -22,3 +22,6 @@ lapply(packages, library, character.only = TRUE)
 # Configurar Git
 usethis::use_git()
 
+# Guardar información de la sesión
+sessionInfo_content <- capture.output(sessionInfo())
+writeLines(sessionInfo_content, "docs/session_info.md")
