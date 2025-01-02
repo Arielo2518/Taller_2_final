@@ -101,6 +101,9 @@ if(!require(gridExtra)){install.packages("gridExtra")}; library(gridExtra)
 if(!require(cowplot)){install.packages("cowplot")}; library(cowplot)
 if(!require(rio)){install.packages("rio")}; library(rio)
 if(!require(flexdashboard)){install.packages("flexdashboard")}; library(flexdashboard)
+if(!require(tidyr)){install.packages("tidyr")}; library(tidyr)
+
+library(tidyr)
 
 ```
 
@@ -355,17 +358,7 @@ comuna_codes_rm <- comuna_codes_rm %>%
 ```
 
 
-
 # Unión de códigos comunales a nombre
-
-
-```{r}
-casen_2021_rm <- read_excel("data/CASEN/casen_2021_rm.xlsx")
-casen_comunas_2021 <- read_excel("data/CASEN/casen_comunas_2021.xlsx")
-```
-
-
-
 
 #casen_2013_rm <- casen_2013_rm %>%
 #mutate(comuna = as.character(comuna))
@@ -384,20 +377,33 @@ casen_comunas_2021 <- read_excel("data/CASEN/casen_comunas_2021.xlsx")
 #mutate(comuna = str_to_lower(comuna))
 
 
+
 # Union CASEN 2022 con comunas
 
 #Casen 2022 en sus notas para la investigación comtepla que "no está diseñada para ser representativa a nivel provincial o comunal, por lo que la base principal de Casen ha sido publicada sin incluir las variables de identificación
 #  de estas dos unidades territoriales" sin embargo, estas variables se han puesto a disposición de las y los investigadores en una base de datos complementaria porque unimos ambas bases para identificar valores comunales de CASEN.
 
+```{r}
 
-casen_2021_rm <- read_excel("data/CASEN/casen_2021_rm.xlsx")
-casen_comunas_2021 <- read_excel("data/CASEN/casen_comunas_2021.xlsx")
+casen_2021_rm <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/CASEN/casen_2021_rm.xlsx")
+casen_comunas_2021 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/CASEN/casen_comunas_2021.xlsx")
+```
 
+
+```{r}
 casen_2021_rm_actualizada <- casen_2021_rm %>%
   left_join(casen_comunas_2021, by = "folio") #La unión fue mediante el folio de los encuestados
 
+
+casen_2021_rm_actualizada <- casen_2021_rm %>%
+  left_join(casen_comunas_2021, by = "folio") %>%  # Unión por 'folio'
+  distinct() %>%                                  # Eliminar duplicados
+  filter(complete.cases(.))                       # Filtrar filas sin NA                                    # Eliminar filas con NA
+```
 # Etiqueta de comunas por código
 
+
+```{r}
 casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
   mutate(comuna = as.character(comuna))
 
@@ -406,10 +412,10 @@ casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>% # Nueva base actualiz
   mutate(comuna = nombre_comuna) %>% # Reemplazar el código por el nombre
   select(-nombre_comuna)   # Se elima la columna adicional
 
-
 casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
-  mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .)) %>% # Valores NA
-  mutate(comuna = str_to_lower(comuna))
+  mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .))
+```
+
 
 
 # Limpieza CASEN
