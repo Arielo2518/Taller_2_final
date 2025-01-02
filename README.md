@@ -1,7 +1,7 @@
 # Análisis CASEN/SERVEL 2021
-Análisis de la relación entre participación electoral y condiciones socioeconómicas en Chile.
+Análisis de la relación entre participación electoral y condiciones socioeconómicas en la Región Metropolitana de Chile.
 
-por motivos de tamaño KB solo fue posible analizar servel y casen 2021
+Por motivos de tamaño KB solo fue posible analizar servel y casen 2021.
 ## Estructura del Proyecto
 - `data/`: Datos brutos de CASEN y SERVEL
 - `output/`: Resultados y visualizaciones
