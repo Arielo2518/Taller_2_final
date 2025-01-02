@@ -1,21 +1,15 @@
----
-  title: "prueba2"
-author: "Ariel Alvarez"
-date: "2024-12-27"
-output: html_document
----
-  
+
   # Pull a GITHUB
-  
   
 dir.create("data", showWarnings = FALSE) #DATA
 dir.create("output", showWarnings = FALSE) # RESULTADOS
 dir.create("R", showWarnings = FALSE) # SCRIPT
 dir.create("docs", showWarnings = FALSE) # Documentos
 
-readme_content <- "# Análisis CASEN/SERVEL 2013-2021
+readme_content <- "# Análisis CASEN/SERVEL 2021
 Análisis de la relación entre participación electoral y condiciones socioeconómicas en Chile.
 
+por motivos de tamaño KB solo fue posible analizar servel y casen 2021
 ## Estructura del Proyecto
 - `data/`: Datos brutos de CASEN y SERVEL
 - `output/`: Resultados y visualizaciones
@@ -150,9 +144,9 @@ eleccion_2021_segundavuelta <- datos_comunas2_2021_agrupado
 
 # Limpieza
 
-```{r}
+
 # remove(datos2021_1, datos_comunas1_2021, datos_comunas1_2021_agrupado, metropolitana_2021_1, presidencial_2021_1, datos2021_2, datos_comunas2_2021, datos_comunas2_2021_agrupado, metropolitana_2021_2, presidencial_2021_2)
-```
+
 
 
 ###############################################
@@ -246,6 +240,7 @@ plot_grid(grafico_combinado_2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 
 # Etiquetar códigos de comunales de Casen a escritos
 
+
 comuna_codes_rm <- c(
   "13101" = "SANTIAGO",
   "13102" = "CERRILLOS",
@@ -309,7 +304,6 @@ comuna_codes_rm <- tibble::tibble(
 
 # Unión de códigos comunales a nombre
 
-```{r}
 #casen_2013_rm <- casen_2013_rm %>%
 #mutate(comuna = as.character(comuna))
 
@@ -325,7 +319,7 @@ comuna_codes_rm <- tibble::tibble(
 #casen_2013_rm_actualizada <- casen_2013_rm_actualizada %>%
 #mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .)) %>% # Valores NA
 #mutate(comuna = str_to_lower(comuna))
-```
+
 
 # Union CASEN 2022 con comunas
 
@@ -353,19 +347,17 @@ casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>% # Nueva base actualiz
 casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
   mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .)) %>% # Valores NA
   mutate(comuna = str_to_lower(comuna))
-```
+
 
 # Limpieza CASEN
 
-```{r}
-remove(casen_2013, casen_2013_rm, casen_2017, casen_2017_rm, casen_2021, casen_2021_rm, casen_comunas_2021, comuna_codes_rm)
-```
+# remove(casen_2013, casen_2013_rm, casen_2017, casen_2017_rm, casen_2021, casen_2021_rm, casen_comunas_2021, comuna_codes_rm)
+
 
 
 ### Manipulación CASEN nivel educacional
 
-```{r}
-casen_2013_rm_actualizada <- casen_2013_rm_actualizada %>%
+casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
   mutate(educ_categoria = case_when(
     educ == 0 ~ "Sin educación",
     educ %in% 1:2 ~ "Básica",
@@ -375,5 +367,4 @@ casen_2013_rm_actualizada <- casen_2013_rm_actualizada %>%
     educ > 9 ~ "Superior",
     TRUE ~ "Otro"  # Para cualquier valor inesperado
   ))
-```
 
