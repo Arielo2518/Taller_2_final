@@ -1,12 +1,8 @@
 ---
 title: "Taller 2"
-author: "Ariel Alvarez Marcos Gonzalez Arturo Valenzuela"
-date: "2025-01-02"
-output:
-  html_document: default
-  pdf_document: default
+format: html
+editor: visual
 ---
-
 
 ```{r}
 if(!require(readxl)){install.packages("readxl")}; library(readxl)
@@ -22,10 +18,8 @@ if(!require(rio)){install.packages("rio")}; library(rio)
 if(!require(tidyr)){install.packages("tidyr")}; library(tidyr)
 ```
 
-
-
-
 # Pull a GITHUB
+
 ```{r}
   
 dir.create("data", showWarnings = FALSE) #DATA
@@ -102,12 +96,13 @@ writeLines(gitignore_content, ".gitignore")
 
 ```
 
+# Carga y procesamiento de datos electorales
 
-# Carga y procesamiento de datos electorales 
+############################################# 
 
-#############################################
-############### Presidencial 2021 ###########
-#############################################
+############### Presidencial 2021
+
+############################################# 
 
 # Carga datos de participación Presidencial 2021 primera vuelta
 
@@ -130,6 +125,7 @@ datos_comunas1_2021_agrupado <- metropolitana_2021_1 %>%
   ) %>%
   mutate(Participacion_Porcentaje = (Total_Votacion / Total_Inscritos) * 100)
 ```
+
 # Datos Limpios
 
 ```{r}
@@ -140,7 +136,8 @@ eleccion_2021_primeravuelta <- datos_comunas1_2021_agrupado %>%
 eleccion_2021_primeravuelta
 ```
 
-############################ SEGUNDA VUELTA ##################################
+############################ SEGUNDA VUELTA
+
 # Carga datos de participación Presidencial 2021 segunda vuelta
 
 ```{r}
@@ -153,7 +150,6 @@ datos_comunas2_2021 <- metropolitana_2021_2 %>%
 
 # Datos agrupados por comuna y porcentaje de participación
 
-
 ```{r}
 datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
@@ -164,8 +160,8 @@ datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>%
   ) %>%
   mutate(Participacion_Porcentaje = (Total_Votacion / Total_Inscritos) * 100)
 ```
-#  Datos limpios
 
+# Datos limpios
 
 ```{r}
 
@@ -174,18 +170,20 @@ eleccion_2021_segundavuelta <- datos_comunas2_2021_agrupado %>%
   mutate(comuna = str_to_lower(comuna))
 eleccion_2021_segundavuelta
 ```
+
 # Limpieza
 
 ```{r}
 remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupadometropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021)
 ```
 
-###############################################
-################### geolocalización #####################
-###############################################
+############################################### 
+
+################### geolocalización
+
+############################################### 
 
 # Primera vuelta
-
 
 ```{r}
 eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
@@ -250,10 +248,11 @@ participacion_2021_segundavuelta <- ggplot(comunas_santiago) +
 participacion_2021_segundavuelta
 ```
 
-##########################################################
-#################### Gráficos Elecciones ##################
-############################################################
+########################################################## 
 
+#################### Gráficos Elecciones
+
+############################################################ 
 
 ```{r}
 # Gráfico 2021
@@ -270,12 +269,14 @@ leyenda <- get_legend(participacion_2021_primeravuelta)
 # Combinar gráficos y leyenda
 plot_grid(grafico_combinado_2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
-####################################################
-################### CASEN #########################
-###################################################
+
+#################################################### 
+
+################### CASEN
+
+################################################### 
 
 # Etiquetar códigos de comunales de Casen a escritos
-
 
 ```{r}
 comuna_codes_rm <- c(
@@ -342,19 +343,14 @@ comuna_codes_rm <- comuna_codes_rm %>%
   mutate(nombre_comuna = str_to_lower(nombre_comuna))
 ```
 
-
 # Union CASEN 2022 con comunas
 
-#Casen 2022 en sus notas para la investigación comtepla que "no está diseñada para ser representativa a nivel provincial o comunal, por lo que la base principal de Casen ha sido publicada sin incluir las variables de identificación
-#  de estas dos unidades territoriales" sin embargo, estas variables se han puesto a disposición de las y los investigadores en una base de datos complementaria porque unimos ambas bases para identificar valores comunales de CASEN.
-
+#Casen 2022 en sus notas para la investigación comtepla que "no está diseñada para ser representativa a nivel provincial o comunal, por lo que la base principal de Casen ha sido publicada sin incluir las variables de identificación \# de estas dos unidades territoriales" sin embargo, estas variables se han puesto a disposición de las y los investigadores en una base de datos complementaria porque unimos ambas bases para identificar valores comunales de CASEN.
 
 ```{r}
 casen_2021_rm <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/CASEN/casen_2021_rm.xlsx")
 casen_comunas_2021 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/CASEN/casen_comunas_2021.xlsx")
 ```
-
-
 
 ```{r}
 
@@ -365,8 +361,6 @@ casen_2021_rm_actualizada <- casen_2021_rm %>%
 
 casen_2021_rm_actualizada                                
 ```
-
-
 
 # Etiqueta de comunas por código
 
@@ -382,13 +376,11 @@ casen_2021 <- casen_2021_rm_actualizada %>%
   select(-nombre_comuna)
 ```
 
-
 # Limpieza CASEN
 
 ```{r}
 remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm) 
 ```
-
 
 # Manipulacion CASEN promedio de DECILES por comuna
 
@@ -405,8 +397,7 @@ promedio_dau_comuna
 
 # Cruce de participación electoral por promedio de decil CASEN
 
-
-```{r} 
+```{r}
 # Reemplazamos Ñ por n para cruce con CASEN
 eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
   mutate(across(everything(), ~str_replace_all(., "ñ", "n")))
@@ -414,7 +405,6 @@ eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
 eleccion_2021_segundavuelta <- eleccion_2021_segundavuelta %>%
   mutate(across(everything(), ~str_replace_all(., "ñ", "n")))
 ```
-
 
 ```{r}
 # Realizar el cruce de bases por 'comuna'
@@ -430,16 +420,7 @@ datos_cruzados_primeravuelta
 datos_cruzados_segundavuelta
 ```
 
-
-
-
-
-
-
-
-#############################################
-
-
+############################################# 
 
 ```{r}
 # Creamos una clasificación simplificada de nivel educacional
@@ -508,5 +489,3 @@ resumen_educacional <- casen_2021_rm_actualizada %>%
 print(resumen_educacional)
 
 ```
-
- 
