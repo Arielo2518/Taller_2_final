@@ -3,8 +3,8 @@ title: "Taller 2"
 author: "Ariel Alvarez Marcos Gonzalez Arturo Valenzuela"
 date: "2025-01-02"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 
@@ -425,11 +425,14 @@ datos_cruzados_primeravuelta <- eleccion_2021_primeravuelta %>%
 datos_cruzados_segundavuelta <- eleccion_2021_segundavuelta %>%
   left_join(promedio_dau_comuna, by = "comuna")
 
-
 datos_cruzados_primeravuelta
 
 datos_cruzados_segundavuelta
 ```
+
+
+
+
 
 
 
@@ -507,4 +510,3 @@ print(resumen_educacional)
 ```
 
  
-
