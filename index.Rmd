@@ -112,9 +112,9 @@ writeLines(gitignore_content, ".gitignore")
 
 # Carga y procesamiento de datos electorales 
 
-#############################################
-############### Presidencial 2021 ###########
-#############################################
+#################################################
+############### Presidencial 2021 ###############
+#################################################
 
 # Carga datos de participación Presidencial 2021 primera vuelta
 
@@ -188,7 +188,7 @@ remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, d
 ```
 
 ###############################################
-################### geolocalización #####################
+############### Geolocalización ###############
 ###############################################
 
 # Primera vuelta
@@ -269,9 +269,9 @@ Gráfico_2 <- ggplot(comunas_santiago) +
 Gráfico_2
 ```
 
-##########################################################
-#################### Gráficos Elecciones ##################
-############################################################
+######################################################
+############### Gráficos Elecciones ##################
+######################################################
 
 
 ```{r}
@@ -289,11 +289,11 @@ leyenda <- get_legend(Gráfico_1)
 # Combinar gráficos y leyenda
 plot_grid(Gráfico_3, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
-####################################################
-################### CASEN #########################
-###################################################
+#####################################
+############### CASEN ###############
+#####################################
 
-# Etiquetar códigos de comunales de Casen a escritos
+# Etiquetar códigos comunales de Casen con sus nombres
 
 
 ```{r, warning=FALSE, results='hide'}
@@ -364,8 +364,7 @@ comuna_codes_rm <- comuna_codes_rm %>%
 
 # Union CASEN 2022 con comunas
 
-#Casen 2022 en sus notas para la investigación comtepla que "no está diseñada para ser representativa a nivel provincial o comunal, por lo que la base principal de Casen ha sido publicada sin incluir las variables de identificación
-#  de estas dos unidades territoriales" sin embargo, estas variables se han puesto a disposición de las y los investigadores en una base de datos complementaria porque unimos ambas bases para identificar valores comunales de CASEN.
+# Casen 2022 en sus notas para la investigación contempla que "no está diseñada para ser representativa a nivel provincial o comunal, por lo que la base principal de Casen ha sido publicada sin incluir las variables de identificación de estas dos unidades territoriales" (CASEN, 2022). Sin embargo, estas variables se han puesto a disposición de las y los investigadores en una base de datos complementaria porque unimos ambas bases para identificar valores comunales de CASEN.
 
 
 ```{r}
@@ -426,7 +425,7 @@ promedio_dau_comuna
 
 
 ```{r} 
-# Reemplazamos Ñ por n para cruce con CASEN
+# Reemplazamos ñ por n para cruce con CASEN
 eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
   mutate(across(everything(), ~str_replace_all(., "ñ", "n")))
 
@@ -456,7 +455,7 @@ Del cruce de bases CASEN y SERVEL, se puede desprender por medio de la tabla que
 
 
 ```{r}
-#  Transformamos promedio dau a númericoa
+#  Transformamos promedio dau a númerico
 datos_cruzados_primeravuelta <- datos_cruzados_primeravuelta %>%
   mutate(promedio_dau = as.numeric(promedio_dau))
 
@@ -464,7 +463,7 @@ datos_cruzados_primeravuelta <- datos_cruzados_primeravuelta %>%
 promedio_dau_comuna <- datos_cruzados_primeravuelta %>% 
   filter(!is.na(promedio_dau) & promedio_dau >= 0) %>%  
   group_by(comuna) %>% 
-  summarise(promedio_dau_comuna = mean(promedio_dau, na.rm = TRUE))  # Cambié la suma por el promedio
+  summarise(promedio_dau_comuna = mean(promedio_dau, na.rm = TRUE))  # Cambio de la suma por el promedio
 
 # Mapa desde el paquete Chile Mapas
 comunas_santiago <- mapa_comunas %>% 
@@ -505,7 +504,7 @@ datos_cruzados_segundavuelta <- datos_cruzados_segundavuelta %>%
 promedio_dau_comuna <- datos_cruzados_segundavuelta %>% 
   filter(!is.na(promedio_dau) & promedio_dau >= 0) %>%  
   group_by(comuna) %>% 
-  summarise(promedio_dau_comuna = mean(promedio_dau, na.rm = TRUE))  # Cambié la suma por el promedio
+  summarise(promedio_dau_comuna = mean(promedio_dau, na.rm = TRUE))  # Cambio de la suma por el promedio
 
 # Mapa desde el paquete Chile Mapas
 comunas_santiago <- mapa_comunas %>% 
