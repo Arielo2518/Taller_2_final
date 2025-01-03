@@ -13,10 +13,12 @@ packages <- c(
 )
 
 # Instalar paquetes faltantes
+
 new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
 if(length(new_packages)) install.packages(new_packages)
 
 # Cargar paquetes
+
 lapply(packages, library, character.only = TRUE)
 
 # Configurar Git

@@ -3,11 +3,11 @@ title: "Taller 2"
 author: "Ariel Alvarez Marcos Gonzalez Arturo Valenzuela"
 date: "2025-01-02"
 output:
-  output: 
   html_document:
     theme: united
     toc: true
     toc_float: true
+  output: 
 ---
 
 
@@ -34,17 +34,18 @@ if(!require(tidyr)){install.packages("tidyr")}; library(tidyr)
 dir.create("data", showWarnings = FALSE) #DATA
 dir.create("output", showWarnings = FALSE) # RESULTADOS
 dir.create("R", showWarnings = FALSE) # SCRIPT
-dir.create("docs", showWarnings = FALSE) # Documentos
+dir.create("documentos", showWarnings = FALSE) # Documentos
 
 readme_content <- "# Análisis CASEN/SERVEL 2021
 Análisis de la relación entre participación electoral y condiciones socioeconómicas en Chile.
+por motivos de tamaño KB solo fue posible analizar servel y casen 2021.
 
-por motivos de tamaño KB solo fue posible analizar servel y casen 2021
+
 ## Estructura del Proyecto
 - `data/`: Datos brutos de CASEN y SERVEL
 - `output/`: Resultados y visualizaciones
 - `R/`: Scripts de análisis
-- `docs/`: Documentación adicional
+- `documentos/`: Documentación adicional
 
 ## Equipo
 - Ariel Álvarez
@@ -82,10 +83,12 @@ packages <- c(
 )
 
 # Instalar paquetes faltantes
+
 new_packages <- packages[!(packages %in% installed.packages()[,"Package"])]
 if(length(new_packages)) install.packages(new_packages)
 
 # Cargar paquetes
+
 lapply(packages, library, character.only = TRUE)
 
 # Configurar Git
@@ -94,7 +97,7 @@ usethis::use_git()
 
 writeLines(load_data_content, file.path("R", "01_load_data.R"))
 
-# Crear .gitignore - Este archivo evita que se suban archivos innecesarios a GitHub
+
 gitignore_content <- ".Rproj.user
 .Rhistory
 .RData
@@ -131,7 +134,8 @@ datos_comunas1_2021_agrupado <- metropolitana_2021_1 %>%
     Total_Inscritos = sum(as.numeric(Inscritos), na.rm = TRUE),
     Total_Votacion = sum(as.numeric(Votación), na.rm = TRUE)
   ) %>%
-  mutate(Participacion_Porcentaje = (Total_Votacion / Total_Inscritos) * 100)
+  mutate(Participacion_Porcentaje = round((Total_Votacion / Total_Inscritos) * 100, 1))
+
 ```
 # Datos Limpios
 
@@ -165,7 +169,7 @@ datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>%
     Total_Inscritos = sum(as.numeric(Inscritos), na.rm = TRUE),
     Total_Votacion = sum(as.numeric(Votación), na.rm = TRUE)
   ) %>%
-  mutate(Participacion_Porcentaje = (Total_Votacion / Total_Inscritos) * 100)
+   mutate(Participacion_Porcentaje = round((Total_Votacion / Total_Inscritos) * 100, 1))
 ```
 #  Datos limpios
 
@@ -214,7 +218,14 @@ Gráfico_1 <- ggplot(comunas_santiago) +
   geom_sf(aes(fill = participacion_comuna, geometry = geometry)) +
   scale_fill_gradientn(colours = rev(paleta), name = "Porcentaje participación") +
   labs(title = "Participación Electoral en 1era Vuelta 2021") +
-  theme_minimal(base_size = 13)
+   theme_minimal(base_size = 13) +
+  theme(
+    axis.title = element_blank(),  # Quitar los títulos de los ejes
+    axis.text = element_blank(),   # Quitar las marcas de los ejes
+    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
+    plot.title = element_text(hjust = 0.5)  # Centrar el título
+  )
+
 Gráfico_1
 ```
 
@@ -246,7 +257,13 @@ Gráfico_2 <- ggplot(comunas_santiago) +
   geom_sf(aes(fill = participacion_comuna, geometry = geometry)) +
   scale_fill_gradientn(colours = rev(paleta), name = "Porcentaje participación") +
   labs(title = "Participación Electoral en 2da Vuelta 2021") +
-  theme_minimal(base_size = 13)
+ theme_minimal(base_size = 13) +
+  theme(
+    axis.title = element_blank(),  # Quitar los títulos de los ejes
+    axis.text = element_blank(),   # Quitar las marcas de los ejes
+    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
+    plot.title = element_text(hjust = 0.5)  # Centrar el título
+  )
 
 Gráfico_2
 ```
@@ -392,13 +409,14 @@ remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm, casen_2021_rm_actuali
 
 # Manipulacion CASEN promedio de DECILES por comuna
 
-```{r}
+La variable DAU es el decil autonoma nacional para comparar el nivel socioeconomico de las personas. Por temas de anális observamos la región metropolitana. Pero puede ser llevado acabo a un nivel mayor a nivel país.
 
+```{r}
 promedio_dau_comuna <- casen_2021 %>%
   group_by(comuna) %>%                    # Agrupar por comuna
-  summarise(promedio_dau = mean(dau, na.rm = TRUE))  # Calcular promedio de 'dau' ignorando NA
+  summarise(promedio_dau = round(mean(dau, na.rm = TRUE), 1))  # Calcular promedio de 'dau' redondeado a 1 decimal
 
-# Ver el resultado
+
 promedio_dau_comuna
 
 ```
@@ -430,8 +448,10 @@ datos_cruzados_primeravuelta
 datos_cruzados_segundavuelta
 ```
 
-# Mapas sobre promedio de personas por decil en Región Metropolitana
+Del cruce de bases CASEN y SERVEL, se puede desprender por medio de la tabla que las comunas con un porcentaje de participación más alto como, por ejemplo, Las Condes (63.25%), Vitacura (69.26%), Providencia (56.49%), Ñuñoa (61.82%) y Lo Barnechea (65.32%), poseen un promedio decil comunal más alto (sobre 7), que para las comunas mencionadas anteriormente serían de 8.38, 9, 8.76, 7.73 y 7.05, respectivamente. En cambio, para las comunas con un porcentaje de participación más bajo como, por ejemplo, La Pintana (40.37%), Renca (44.24%), El Bosque (45.39%), La Granja (44.39%) y María Pinto (46.81%), poseen un promedio decil comunal más bajo (bajo 5): 3.62, 3.92, 4.27, 4.23 y 3.8, respectivamente. 
 
+
+# Mapas sobre promedio de personas por decil en Región Metropolitana
 
 
 ```{r}
@@ -518,7 +538,6 @@ Gráfico_5
 
 
 
-
 ```{r}
 # Gráfico 2021
 Gráfico_6 <- plot_grid(
@@ -534,12 +553,6 @@ leyenda <- get_legend(Gráfico_4)
 # Combinar gráficos y leyenda
 plot_grid(Gráfico_6, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
-
-
-
-
-#############################################
-
 
 
 ```{r}
@@ -610,6 +623,9 @@ analisis_educacion_participacion <- perfil_educacional_comunal %>%
   left_join(datos_participacion, by = c("comuna" = "comuna"))
 
 # Creamos una visualización que muestre la relación entre nivel educacional y participación
+
+analisis_educacion_participacion$Participacion_Porcentaje <- as.numeric(analisis_educacion_participacion$Participacion_Porcentaje)
+
 ggplot(analisis_educacion_participacion, 
        aes(x = porcentaje_educacion, 
            y = Participacion_Porcentaje,
@@ -625,7 +641,12 @@ ggplot(analisis_educacion_participacion,
     color = "Nivel Educacional"
   ) +
   theme_minimal() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  scale_y_continuous(
+    breaks = seq(0, 100, by = 20),  # Establecer saltos de 20 en el eje y
+    labels = scales::percent_format(scale = 1)  # Formato como porcentaje
+  )
+
 
 # También podemos calcular la correlación entre educación universitaria y participación
 
