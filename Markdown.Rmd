@@ -111,15 +111,11 @@ writeLines(gitignore_content, ".gitignore")
 
 # Carga datos de participación Presidencial 2021 primera vuelta
 
-
-
-
 ```{r}
 metropolitana_2021_1 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_primeravuelta.xlsx")
 datos_comunas1_2021 <- metropolitana_2021_1 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) 
-
 ```
 
 # Datos agrupados por comuna y porcentaje de participación
@@ -144,18 +140,14 @@ eleccion_2021_primeravuelta <- datos_comunas1_2021_agrupado %>%
 eleccion_2021_primeravuelta
 ```
 
-
 ############################ SEGUNDA VUELTA ##################################
 # Carga datos de participación Presidencial 2021 segunda vuelta
-
-
 
 ```{r}
 metropolitana_2021_2 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_segundavuelta.xlsx")
 datos_comunas2_2021 <- metropolitana_2021_2 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) 
-
 
 ```
 
