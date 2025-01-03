@@ -7,7 +7,7 @@ por motivos de tamaño KB solo fue posible analizar servel y casen 2021.
 - `data/`: Datos brutos de CASEN y SERVEL
 - `output/`: Resultados y visualizaciones
 - `R/`: Scripts de análisis
-- `documentos/`: Documentación adicional
+- `docs/`: Documentación adicional
 
 ## Equipo
 - Ariel Álvarez

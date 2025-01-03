@@ -3,39 +3,39 @@ title: "Taller 2"
 author: "Ariel Alvarez Marcos Gonzalez Arturo Valenzuela"
 date: "2025-01-02"
 output:
+  pdf_document:
+    toc: true
+  output: null
   html_document:
     theme: united
     toc: true
     toc_float: true
-  output: 
 ---
 
-
 ```{r, warning=FALSE}
-if(!require(readxl)){install.packages("readxl")}; library(readxl)
-if(!require(dplyr)){install.packages("dplyr")}; library(dplyr)
-if(!require(chilemapas)){install.packages("chilemapas")}; library(chilemapas)
-if(!require(ggplot2)){install.packages("ggplot2")}; library(ggplot2)
-if(!require(stringr)){install.packages("stringr")}; library(stringr)
-if(!require(stringi)){install.packages("stringi")}; library(stringi)
-if(!require(tools)){install.packages("tools")}; library(tools)
-if(!require(gridExtra)){install.packages("gridExtra")}; library(gridExtra)
-if(!require(cowplot)){install.packages("cowplot")}; library(cowplot)
-if(!require(rio)){install.packages("rio")}; library(rio)
-if(!require(tidyr)){install.packages("tidyr")}; library(tidyr)
+if(!require(readxl)){install.packages("readxl")}; library(readxl) # Para leer archivos Excel
+if(!require(dplyr)){install.packages("dplyr")}; library(dplyr) # Manipulación
+if(!require(chilemapas)){install.packages("chilemapas")}; library(chilemapas) # Mapa de Chile
+if(!require(ggplot2)){install.packages("ggplot2")}; library(ggplot2) # Visualización
+if(!require(stringr)){install.packages("stringr")}; library(stringr) # Manipulación
+if(!require(stringi)){install.packages("stringi")}; library(stringi) # Manipulación
+if(!require(tools)){install.packages("tools")}; library(tools) # Manipulación
+if(!require(gridExtra)){install.packages("gridExtra")}; library(gridExtra) # Visualización
+if(!require(cowplot)){install.packages("cowplot")}; library(cowplot) # Visualización
+if(!require(rio)){install.packages("rio")}; library(rio) # Importar archivos desde GITHUB
+if(!require(tidyr)){install.packages("tidyr")}; library(tidyr) # Manipulación
+if(!require(webshot2)){install.packages("webshot2")}; library(webshot2) # Importar HTML y PDF
 ```
 
 
-
-
-
 # Pull a GITHUB
+
 ```{r, warning=FALSE}
   
 dir.create("data", showWarnings = FALSE) #DATA
 dir.create("output", showWarnings = FALSE) # RESULTADOS
 dir.create("R", showWarnings = FALSE) # SCRIPT
-dir.create("documentos", showWarnings = FALSE) # Documentos
+dir.create("docs", showWarnings = FALSE) # Documentos
 
 readme_content <- "# Análisis CASEN/SERVEL 2021
 Análisis de la relación entre participación electoral y condiciones socioeconómicas en Chile.
@@ -46,7 +46,7 @@ por motivos de tamaño KB solo fue posible analizar servel y casen 2021.
 - `data/`: Datos brutos de CASEN y SERVEL
 - `output/`: Resultados y visualizaciones
 - `R/`: Scripts de análisis
-- `documentos/`: Documentación adicional
+- `docs/`: Documentación adicional
 
 ## Equipo
 - Ariel Álvarez
@@ -120,7 +120,7 @@ writeLines(gitignore_content, ".gitignore")
 
 ```{r, results='hide'}
 metropolitana_2021_1 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_primeravuelta.xlsx")
-datos_comunas1_2021 <- metropolitana_2021_1 %>% 
+datos_comunas1_2021 <- metropolitana_2021_1 %>% # Selección de variables de interés
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) 
 ```
@@ -128,7 +128,7 @@ datos_comunas1_2021 <- metropolitana_2021_1 %>%
 # Datos agrupados por comuna y porcentaje de participación
 
 ```{r, warning=FALSE, results='hide'}
-datos_comunas1_2021_agrupado <- metropolitana_2021_1 %>% 
+datos_comunas1_2021_agrupado <- metropolitana_2021_1 %>% # Aquí generamos una variable nueva de % de participación
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) %>%
   summarize(
@@ -153,7 +153,7 @@ eleccion_2021_primeravuelta
 
 ```{r, warning=FALSE, results='hide'}
 metropolitana_2021_2 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_segundavuelta.xlsx")
-datos_comunas2_2021 <- metropolitana_2021_2 %>% 
+datos_comunas2_2021 <- metropolitana_2021_2 %>%  # Selección de variables de interés
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) 
 
@@ -163,7 +163,7 @@ datos_comunas2_2021 <- metropolitana_2021_2 %>%
 
 
 ```{r, warning=FALSE, results='hide'}
-datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>% 
+datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>% # Aquí generamos una variable nueva de % de participación
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) %>%
   summarize(
@@ -184,7 +184,7 @@ eleccion_2021_segundavuelta
 # Limpieza
 
 ```{r, warning=FALSE, results='hide'}
-remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupado, metropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021)
+remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupado, metropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021) # Borramos BBDD que ya no ocuparemos
 ```
 
 ###############################################
@@ -194,7 +194,8 @@ remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, d
 # Primera vuelta
 
 ```{r}
-eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
+
+eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>% # Transformamos la var a numerica
   mutate(Participacion_Porcentaje = as.numeric(Participacion_Porcentaje))
 
 participacion_comuna <- eleccion_2021_primeravuelta %>% 
@@ -202,13 +203,13 @@ participacion_comuna <- eleccion_2021_primeravuelta %>%
   group_by(comuna) %>% 
   summarise(participacion_comuna = sum(Participacion_Porcentaje, na.rm = TRUE))
 
-comunas_santiago <- mapa_comunas %>% 
+comunas_santiago <- mapa_comunas %>% #Desde chile mapas filtramos la RM
   filter(codigo_region == 13) %>% 
   left_join(
     codigos_territoriales %>% 
       select(matches("comuna"))
   ) %>%
-  mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%  # Convertir a minúsculas y quitar espacios
+  mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%  # Convertimos a minusculas para estandarizar
   left_join(participacion_comuna %>%
               mutate(comuna = str_trim(tolower(comuna))), by = c("nombre_comuna" = "comuna"))
 
@@ -221,19 +222,25 @@ Gráfico_1 <- ggplot(comunas_santiago) +
   labs(title = "Participación Electoral en 1era Vuelta 2021") +
    theme_minimal(base_size = 13) +
   theme(
-    axis.title = element_blank(),  # Quitar los títulos de los ejes
-    axis.text = element_blank(),   # Quitar las marcas de los ejes
-    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
-    plot.title = element_text(hjust = 0.5)  # Centrar el título
+    axis.title = element_blank(),  
+    axis.text = element_blank(),   
+    axis.ticks = element_blank(),  
+    plot.title = element_text(hjust = 0.5)  
   )
 
+Gráfico_1 <- ggplotly(Gráfico_1) # Gráfico interactivo
+
 Gráfico_1
+
 ```
+
+
 
 # Segunda vuelta
 
 ```{r}
-eleccion_2021_segundavuelta <- eleccion_2021_segundavuelta %>%
+
+eleccion_2021_segundavuelta <- eleccion_2021_segundavuelta %>% # Transformamos la var a numerica
   mutate(Participacion_Porcentaje = as.numeric(Participacion_Porcentaje))
 
 participacion_comuna <- eleccion_2021_segundavuelta %>% 
@@ -241,13 +248,13 @@ participacion_comuna <- eleccion_2021_segundavuelta %>%
   group_by(comuna) %>% 
   summarise(participacion_comuna = sum(Participacion_Porcentaje, na.rm = TRUE))
 
-comunas_santiago <- mapa_comunas %>% 
+comunas_santiago <- mapa_comunas %>% # Filtro desde Chile mapas
   filter(codigo_region == 13) %>% 
   left_join(
     codigos_territoriales %>% 
       select(matches("comuna"))
   ) %>%
-  mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%  # Convertir a minúsculas y quitar espacios
+  mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%   # Convertimos a minusculas para estandarizar
   left_join(participacion_comuna %>%
               mutate(comuna = str_trim(tolower(comuna))), by = c("nombre_comuna" = "comuna"))
 
@@ -260,13 +267,17 @@ Gráfico_2 <- ggplot(comunas_santiago) +
   labs(title = "Participación Electoral en 2da Vuelta 2021") +
  theme_minimal(base_size = 13) +
   theme(
-    axis.title = element_blank(),  # Quitar los títulos de los ejes
-    axis.text = element_blank(),   # Quitar las marcas de los ejes
-    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
-    plot.title = element_text(hjust = 0.5)  # Centrar el título
+    axis.title = element_blank(),  
+    axis.text = element_blank(),   
+    axis.ticks = element_blank(),  
+    plot.title = element_text(hjust = 0.5) 
   )
 
+Gráfico_2 <- ggplotly(Gráfico_2) # Gráfico interactivo
+
+
 Gráfico_2
+
 ```
 
 ##########################################################
@@ -283,10 +294,10 @@ Gráfico_3 <- plot_grid(
   ncol = 2
 )
 
-# Extraer la leyenda de uno de los gráficos
+# Usamos solo una leyenda dado que es la misma escala
 leyenda <- get_legend(Gráfico_1)
 
-# Combinar gráficos y leyenda
+# Combinamos ambos gráficos
 plot_grid(Gráfico_3, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
 ####################################################
@@ -357,7 +368,7 @@ comuna_codes_rm <- tibble::tibble(
   nombre_comuna = unname(comuna_codes_rm)  # Nombres
 )
 
-comuna_codes_rm <- comuna_codes_rm %>%
+comuna_codes_rm <- comuna_codes_rm %>% # Los dejamos en minusculas para estandarizar 
   mutate(nombre_comuna = str_to_lower(nombre_comuna))
 ```
 
@@ -392,7 +403,7 @@ colnames(casen_2021)
 
 ```{r}
 casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
-  mutate(comuna = as.character(comuna))
+  mutate(comuna = as.character(comuna)) 
 
 casen_2021 <- casen_2021_rm_actualizada %>%
   left_join(comuna_codes_rm, by = "comuna") %>%
@@ -404,7 +415,7 @@ casen_2021 <- casen_2021_rm_actualizada %>%
 # Limpieza CASEN
 
 ```{r}
-remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm, casen_2021_rm_actualizada) 
+remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm, casen_2021_rm_actualizada) # Limpiamos BBDD que no usaremos
 ```
 
 
@@ -414,9 +425,8 @@ La variable DAU es el decil autonoma nacional para comparar el nivel socioeconom
 
 ```{r}
 promedio_dau_comuna <- casen_2021 %>%
-  group_by(comuna) %>%                    # Agrupar por comuna
+  group_by(comuna) %>%    # Agrupar por comuna
   summarise(promedio_dau = round(mean(dau, na.rm = TRUE), 1))  # Calcular promedio de 'dau' redondeado a 1 decimal
-
 
 promedio_dau_comuna
 
@@ -456,7 +466,7 @@ Del cruce de bases CASEN y SERVEL, se puede desprender por medio de la tabla que
 
 
 ```{r}
-#  Transformamos promedio dau a númericoa
+#  Transformamos promedio dau a númerica
 datos_cruzados_primeravuelta <- datos_cruzados_primeravuelta %>%
   mutate(promedio_dau = as.numeric(promedio_dau))
 
@@ -487,11 +497,14 @@ Gráfico_4 <- ggplot(comunas_santiago) +
   labs(title = "Promedio DAU por Comuna en 2021") +
   theme_minimal(base_size = 13) +
   theme(
-    axis.title = element_blank(),  # Quitar los títulos de los ejes
-    axis.text = element_blank(),   # Quitar las marcas de los ejes
-    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
-    plot.title = element_text(hjust = 0.5)  # Centrar el título
+    axis.title = element_blank(),  
+    axis.text = element_blank(),   
+    axis.ticks = element_blank(),  
+    plot.title = element_text(hjust = 0.5)  
   )
+
+Gráfico_4 <- ggplotly(Gráfico_4) # Gráfico interactivo
+
 
 Gráfico_4
 ```
@@ -528,11 +541,14 @@ Gráfico_5 <- ggplot(comunas_santiago) +
   labs(title = "Promedio DAU por Comuna en 2021") +
   theme_minimal(base_size = 13) +
   theme(
-    axis.title = element_blank(),  # Quitar los títulos de los ejes
-    axis.text = element_blank(),   # Quitar las marcas de los ejes
-    axis.ticks = element_blank(),  # Quitar las líneas de los ejes
-    plot.title = element_text(hjust = 0.5)  # Centrar el título
+    axis.title = element_blank(), 
+    axis.text = element_blank(),   
+    axis.ticks = element_blank(),
+    plot.title = element_text(hjust = 0.5)  
   )
+
+Gráfico_5 <- ggplotly(Gráfico_5) # Gráfico interactivo
+
 
 Gráfico_5
 ```
@@ -548,7 +564,7 @@ Gráfico_6 <- plot_grid(
   ncol = 2
 )
 
-# Extraer la leyenda de uno de los gráficos
+# Usamos la misma leyenda
 leyenda <- get_legend(Gráfico_4)
 
 # Combinar gráficos y leyenda
@@ -596,10 +612,12 @@ resumen_educacional <- casen_2021 %>%
   arrange(desc(porcentaje))
 
 # Mostramos el resumen
-print(resumen_educacional)
-
+resumen_educacional
 
 ```
+
+# Análisis por Nivel educacional
+
 
 ```{r}
 perfil_educacional_comunal <- casen_2021 %>%
@@ -627,7 +645,7 @@ analisis_educacion_participacion <- perfil_educacional_comunal %>%
 
 analisis_educacion_participacion$Participacion_Porcentaje <- as.numeric(analisis_educacion_participacion$Participacion_Porcentaje)
 
-ggplot(analisis_educacion_participacion, 
+gráfico_7 <- ggplot(analisis_educacion_participacion, 
        aes(x = porcentaje_educacion, 
            y = Participacion_Porcentaje,
            color = nivel_educacional)) +
@@ -648,6 +666,9 @@ ggplot(analisis_educacion_participacion,
     labels = scales::percent_format(scale = 1)  # Formato como porcentaje
   )
 
+gráfico_7
+gráfico_7_interactivo <- ggplotly(gráfico_7)
+gráfico_7_interactivo
 
 # También podemos calcular la correlación entre educación universitaria y participación
 
@@ -699,4 +720,7 @@ Los datos muestran que las comunas donde predomina la educación universitaria p
 - Cox, L., and R. Gonzalez. 2022. "Fewer but Younger: Changes in Turnout After Voluntary Voting and Automatic Registration in Chile." Political Behavior 44: 1911–1932. https://doi.org/10.1007/s11109-022-09788-0.
 - Kimball, R., and M. Ross. 2013. The Data Warehouse Toolkit: The Complete Guide to Dimensional Modeling. 3rd ed. Indianapolis: John Wiley & Sons, Inc.
 - UNESCO. 2021. Recomendación de la UNESCO sobre la Ciencia Abierta. https://doi.org/10.54677/YDOG4702.
+
+
+
 
