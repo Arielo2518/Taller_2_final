@@ -11,7 +11,7 @@ output:
 ---
 
 
-```{r}
+```{r, warning=FALSE}
 if(!require(readxl)){install.packages("readxl")}; library(readxl)
 if(!require(dplyr)){install.packages("dplyr")}; library(dplyr)
 if(!require(chilemapas)){install.packages("chilemapas")}; library(chilemapas)
@@ -29,7 +29,7 @@ if(!require(tidyr)){install.packages("tidyr")}; library(tidyr)
 
 
 # Pull a GITHUB
-```{r}
+```{r, warning=FALSE}
   
 dir.create("data", showWarnings = FALSE) #DATA
 dir.create("output", showWarnings = FALSE) # RESULTADOS
@@ -114,7 +114,7 @@ writeLines(gitignore_content, ".gitignore")
 
 # Carga datos de participación Presidencial 2021 primera vuelta
 
-```{r}
+```{r, results='hide'}
 metropolitana_2021_1 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_primeravuelta.xlsx")
 datos_comunas1_2021 <- metropolitana_2021_1 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
@@ -123,7 +123,7 @@ datos_comunas1_2021 <- metropolitana_2021_1 %>%
 
 # Datos agrupados por comuna y porcentaje de participación
 
-```{r}
+```{r, warning=FALSE, results='hide'}
 datos_comunas1_2021_agrupado <- metropolitana_2021_1 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) %>%
@@ -146,7 +146,7 @@ eleccion_2021_primeravuelta
 ############################ SEGUNDA VUELTA ##################################
 # Carga datos de participación Presidencial 2021 segunda vuelta
 
-```{r}
+```{r, warning=FALSE, results='hide'}
 metropolitana_2021_2 <- import("https://github.com/Arielo2518/Taller_2_final/raw/main/data/Servel/metropolitana_2021_segundavuelta.xlsx")
 datos_comunas2_2021 <- metropolitana_2021_2 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
@@ -157,7 +157,7 @@ datos_comunas2_2021 <- metropolitana_2021_2 %>%
 # Datos agrupados por comuna y porcentaje de participación
 
 
-```{r}
+```{r, warning=FALSE, results='hide'}
 datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>% 
   select(Distrito, Comuna, Local, Mesa, Inscritos, Votación) %>%
   group_by(Distrito, Comuna) %>%
@@ -171,7 +171,6 @@ datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>%
 
 
 ```{r}
-
 eleccion_2021_segundavuelta <- datos_comunas2_2021_agrupado %>%
   rename(comuna = Comuna) %>%
   mutate(comuna = str_to_lower(comuna))
@@ -179,8 +178,8 @@ eleccion_2021_segundavuelta
 ```
 # Limpieza
 
-```{r}
-remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupadometropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021)
+```{r, warning=FALSE, results='hide'}
+remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupado, metropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021)
 ```
 
 ###############################################
@@ -188,7 +187,6 @@ remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, d
 ###############################################
 
 # Primera vuelta
-
 
 ```{r}
 eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
@@ -212,12 +210,12 @@ comunas_santiago <- mapa_comunas %>%
 
 paleta <- c("#DCA761", "#CFB567", "#BFBC71", "#9EA887", "#819897")
 
-participacion_2021_primeravuelta <- ggplot(comunas_santiago) + 
+Gráfico_1 <- ggplot(comunas_santiago) + 
   geom_sf(aes(fill = participacion_comuna, geometry = geometry)) +
   scale_fill_gradientn(colours = rev(paleta), name = "Porcentaje participación") +
   labs(title = "Participación Electoral en 1era Vuelta 2021") +
   theme_minimal(base_size = 13)
-participacion_2021_primeravuelta
+Gráfico_1
 ```
 
 # Segunda vuelta
@@ -244,13 +242,13 @@ comunas_santiago <- mapa_comunas %>%
 
 paleta <- c("#DCA761", "#CFB567", "#BFBC71", "#9EA887", "#819897")
 
-participacion_2021_segundavuelta <- ggplot(comunas_santiago) + 
+Gráfico_2 <- ggplot(comunas_santiago) + 
   geom_sf(aes(fill = participacion_comuna, geometry = geometry)) +
   scale_fill_gradientn(colours = rev(paleta), name = "Porcentaje participación") +
   labs(title = "Participación Electoral en 2da Vuelta 2021") +
   theme_minimal(base_size = 13)
 
-participacion_2021_segundavuelta
+Gráfico_2
 ```
 
 ##########################################################
@@ -260,18 +258,18 @@ participacion_2021_segundavuelta
 
 ```{r}
 # Gráfico 2021
-grafico_combinado_2021 <- plot_grid(
-  participacion_2021_primeravuelta + theme(legend.position = "none"),
-  participacion_2021_segundavuelta + theme(legend.position = "none"),
+Gráfico_3 <- plot_grid(
+  Gráfico_1 + theme(legend.position = "none"),
+  Gráfico_2 + theme(legend.position = "none"),
   align = "v",
   ncol = 2
 )
 
 # Extraer la leyenda de uno de los gráficos
-leyenda <- get_legend(participacion_2021_primeravuelta)
+leyenda <- get_legend(Gráfico_1)
 
 # Combinar gráficos y leyenda
-plot_grid(grafico_combinado_2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
+plot_grid(Gráfico_3, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
 ####################################################
 ################### CASEN #########################
@@ -280,7 +278,7 @@ plot_grid(grafico_combinado_2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 # Etiquetar códigos de comunales de Casen a escritos
 
 
-```{r}
+```{r, warning=FALSE, results='hide'}
 comuna_codes_rm <- c(
   "13101" = "SANTIAGO",
   "13102" = "CERRILLOS",
@@ -360,7 +358,6 @@ casen_comunas_2021 <- import("https://github.com/Arielo2518/Taller_2_final/raw/m
 
 
 ```{r}
-
 casen_2021_rm_actualizada <- casen_2021_rm %>%
   left_join(casen_comunas_2021, by = c("folio", "id_persona")) %>% #Las bases se unieron mediante folio e id persona
   group_by(folio) %>% 
@@ -389,7 +386,7 @@ casen_2021 <- casen_2021_rm_actualizada %>%
 # Limpieza CASEN
 
 ```{r}
-remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm) 
+remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm, casen_2021_rm_actualizada) 
 ```
 
 
@@ -524,7 +521,7 @@ Gráfico_5
 
 ```{r}
 # Gráfico 2021
-grafico_combinado_casen2021 <- plot_grid(
+Gráfico_6 <- plot_grid(
   Gráfico_4 + theme(legend.position = "none"),
   Gráfico_5 + theme(legend.position = "none"),
   align = "v",
@@ -535,7 +532,7 @@ grafico_combinado_casen2021 <- plot_grid(
 leyenda <- get_legend(Gráfico_4)
 
 # Combinar gráficos y leyenda
-plot_grid(grafico_combinado_casen2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
+plot_grid(Gráfico_6, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
 
 
@@ -547,7 +544,7 @@ plot_grid(grafico_combinado_casen2021, leyenda, ncol = 1, rel_heights = c(0.81, 
 
 ```{r}
 # Creamos una clasificación simplificada de nivel educacional
-casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
+casen_2021 <- casen_2021 %>%
   mutate(nivel_educacional = case_when(
     # Sin educación formal o básica incompleta
     e6a %in% c(1, 2, 3, 4, 5, 6) | is.na(e6a) ~ "Básica o menos",
@@ -566,7 +563,7 @@ casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
   ))
 
 # Creamos una visualización que muestra la distribución por comuna
-educacion_comuna <- casen_2021_rm_actualizada %>%
+educacion_comuna <- casen_2021 %>%
   # Agrupamos por comuna y nivel educacional para contar
   group_by(comuna, nivel_educacional) %>%
   summarise(cantidad = n(), .groups = 'drop') %>%
@@ -575,43 +572,95 @@ educacion_comuna <- casen_2021_rm_actualizada %>%
   mutate(porcentaje = (cantidad / sum(cantidad)) * 100) %>%
   ungroup()
 
-# Creamos un gráfico de barras apiladas por comuna
-grafico_educacion <- ggplot(educacion_comuna, 
-       aes(x = reorder(comuna, porcentaje), 
-           y = porcentaje, 
-           fill = nivel_educacional)) +
-  geom_bar(stat = "identity") +
-  coord_flip() +
-  scale_fill_brewer(palette = "Set2") +  # Usamos una paleta de colores agradable
-  labs(
-    title = "Nivel Educacional por Comuna",
-    subtitle = "Región Metropolitana - 2021",
-    x = "Comuna",
-    y = "Porcentaje",
-    fill = "Nivel Educacional"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.y = element_text(size = 8),
-    legend.position = "bottom"
-  )
-
-# Mostramos el gráfico
-grafico_educacion
-
 # Creamos un resumen general de la distribución
-resumen_educacional <- casen_2021_rm_actualizada %>%
+resumen_educacional <- casen_2021 %>%
   group_by(nivel_educacional) %>%
   summarise(
     cantidad = n(),
-    porcentaje = round((cantidad / nrow(casen_2021_rm_actualizada)) * 100, 1)
+    porcentaje = round((cantidad / nrow(casen_2021)) * 100, 1)
   ) %>%
   arrange(desc(porcentaje))
 
 # Mostramos el resumen
 print(resumen_educacional)
 
+
 ```
 
+```{r}
+perfil_educacional_comunal <- casen_2021 %>%
+  group_by(comuna, nivel_educacional) %>%
+  summarise(cantidad = n(), .groups = 'drop') %>%
+  group_by(comuna) %>%
+  mutate(
+    porcentaje_educacion = (cantidad / sum(cantidad)) * 100,
+    total_comuna = sum(cantidad)
+  ) %>%
+  ungroup()
+
+# Ahora preparamos los datos de participación electoral
+# Usaremos la primera vuelta como ejemplo, pero podríamos hacer lo mismo con la segunda
+datos_participacion <- eleccion_2021_primeravuelta %>%
+  select(comuna, Participacion_Porcentaje) %>%
+  mutate(comuna = str_to_lower(comuna))  # Convertimos a minúsculas para hacer match con CASEN
+
+# Ahora unimos ambos conjuntos de datos
+analisis_educacion_participacion <- perfil_educacional_comunal %>%
+  mutate(comuna = str_to_lower(comuna)) %>%  # Convertimos a minúsculas para hacer match
+  left_join(datos_participacion, by = c("comuna" = "comuna"))
+
+# Creamos una visualización que muestre la relación entre nivel educacional y participación
+ggplot(analisis_educacion_participacion, 
+       aes(x = porcentaje_educacion, 
+           y = Participacion_Porcentaje,
+           color = nivel_educacional)) +
+  geom_point(size = 3, alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~nivel_educacional) +
+  labs(
+    title = "Relación entre Nivel Educacional y Participación Electoral por Comuna",
+    subtitle = "Región Metropolitana - Primera Vuelta 2021",
+    x = "Porcentaje de población con nivel educacional",
+    y = "Porcentaje de participación electoral",
+    color = "Nivel Educacional"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# También podemos calcular la correlación entre educación universitaria y participación
+
+analisis_educacion_participacion <- analisis_educacion_participacion %>%
+  mutate(
+    porcentaje_educacion = as.numeric(porcentaje_educacion),
+    Participacion_Porcentaje = as.numeric(Participacion_Porcentaje)
+  )
+
+correlacion_universitaria <- analisis_educacion_participacion %>%
+  filter(nivel_educacional == "Universitaria") %>%
+  ungroup() %>%  # Deshacer cualquier agrupamiento previo
+  filter(!is.na(porcentaje_educacion) & !is.na(Participacion_Porcentaje)) %>%
+  summarise(
+    correlacion = cor(porcentaje_educacion, Participacion_Porcentaje, use = "complete.obs")
+  )
+
+# Y crear una tabla resumen que muestre los promedios de participación
+# según el nivel predominante de educación en cada comuna
+resumen_participacion <- analisis_educacion_participacion %>%
+  group_by(comuna) %>%
+  mutate(nivel_predominante = nivel_educacional[which.max(porcentaje_educacion)]) %>%
+  group_by(nivel_predominante) %>%
+  summarise(
+    participacion_promedio = mean(Participacion_Porcentaje, na.rm = TRUE),
+    n_comunas = n_distinct(comuna)
+  ) %>%
+  arrange(desc(participacion_promedio))
+
+# Mostramos los resultados
+print("Correlación entre educación universitaria y participación:")
+print(correlacion_universitaria)
+print("\nResumen de participación por nivel educacional predominante:")
+print(resumen_participacion)
+
+```
  
 
