@@ -3,13 +3,13 @@ title: "Taller 2"
 author: "Ariel Alvarez Marcos Gonzalez Arturo Valenzuela"
 date: "2025-01-02"
 output:
-  pdf_document:
-    toc: true
-  output: null
   html_document:
     theme: united
     toc: true
     toc_float: true
+  output: null
+  pdf_document:
+    toc: true
 ---
 
 ```{r, warning=FALSE}
