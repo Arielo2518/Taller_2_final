@@ -164,7 +164,6 @@ datos_comunas2_2021_agrupado <- metropolitana_2021_2 %>%
   ) %>%
   mutate(Participacion_Porcentaje = (Total_Votacion / Total_Inscritos) * 100)
 ```
-
 #  Datos limpios
 
 
@@ -175,13 +174,11 @@ eleccion_2021_segundavuelta <- datos_comunas2_2021_agrupado %>%
   mutate(comuna = str_to_lower(comuna))
 eleccion_2021_segundavuelta
 ```
-
 # Limpieza
 
 ```{r}
 remove(datos_comunas1_2021, datos_comunas2_2021, datos_comunas1_2021_agrupado, datos_comunas2_2021_agrupadometropolitana_2021_1, metropolitana_2021_2, datos_comunas1_2021, datos_comunas2_2021)
 ```
-
 
 ###############################################
 ################### geolocalización #####################
@@ -196,7 +193,7 @@ eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
 
 participacion_comuna <- eleccion_2021_primeravuelta %>% 
   filter(!is.na(Participacion_Porcentaje) & Participacion_Porcentaje >= 0) %>%  
-  group_by(Comuna) %>% 
+  group_by(comuna) %>% 
   summarise(participacion_comuna = sum(Participacion_Porcentaje, na.rm = TRUE))
 
 comunas_santiago <- mapa_comunas %>% 
@@ -207,7 +204,7 @@ comunas_santiago <- mapa_comunas %>%
   ) %>%
   mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%  # Convertir a minúsculas y quitar espacios
   left_join(participacion_comuna %>%
-              mutate(Comuna = str_trim(tolower(Comuna))), by = c("nombre_comuna" = "Comuna"))
+              mutate(comuna = str_trim(tolower(comuna))), by = c("nombre_comuna" = "comuna"))
 
 
 paleta <- c("#DCA761", "#CFB567", "#BFBC71", "#9EA887", "#819897")
@@ -220,7 +217,6 @@ participacion_2021_primeravuelta <- ggplot(comunas_santiago) +
 participacion_2021_primeravuelta
 ```
 
-
 # Segunda vuelta
 
 ```{r}
@@ -229,7 +225,7 @@ eleccion_2021_segundavuelta <- eleccion_2021_segundavuelta %>%
 
 participacion_comuna <- eleccion_2021_segundavuelta %>% 
   filter(!is.na(Participacion_Porcentaje) & Participacion_Porcentaje >= 0) %>%  
-  group_by(Comuna) %>% 
+  group_by(comuna) %>% 
   summarise(participacion_comuna = sum(Participacion_Porcentaje, na.rm = TRUE))
 
 comunas_santiago <- mapa_comunas %>% 
@@ -240,7 +236,7 @@ comunas_santiago <- mapa_comunas %>%
   ) %>%
   mutate(nombre_comuna = str_trim(tolower(nombre_comuna))) %>%  # Convertir a minúsculas y quitar espacios
   left_join(participacion_comuna %>%
-              mutate(Comuna = str_trim(tolower(Comuna))), by = c("nombre_comuna" = "Comuna"))
+              mutate(comuna = str_trim(tolower(comuna))), by = c("nombre_comuna" = "comuna"))
 
 
 paleta <- c("#DCA761", "#CFB567", "#BFBC71", "#9EA887", "#819897")
@@ -253,7 +249,6 @@ participacion_2021_segundavuelta <- ggplot(comunas_santiago) +
 
 participacion_2021_segundavuelta
 ```
-
 
 ##########################################################
 #################### Gráficos Elecciones ##################
@@ -275,9 +270,6 @@ leyenda <- get_legend(participacion_2021_primeravuelta)
 # Combinar gráficos y leyenda
 plot_grid(grafico_combinado_2021, leyenda, ncol = 1, rel_heights = c(0.81, 0.5))
 ```
-
-
-
 ####################################################
 ################### CASEN #########################
 ###################################################
@@ -363,55 +355,32 @@ casen_comunas_2021 <- import("https://github.com/Arielo2518/Taller_2_final/raw/m
 ```
 
 
+
+```{r}
+
 casen_2021_rm_actualizada <- casen_2021_rm %>%
-  left_join(casen_comunas_2021, by = "folio") %>%  # Unión por 'folio'
-  group_by(folio) %>%
-  summarize(across(everything(), ~first(na.omit(.)))) %>%  # Elegir el primer valor no nulo
-  filter(complete.cases(.))                        # Eliminar filas con valores faltantes
+  left_join(casen_comunas_2021, by = c("folio", "id_persona")) %>% #Las bases se unieron mediante folio e id persona
+  group_by(folio) %>% 
+    mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .)) # Eliminamos valores faltantes
 
-casen_2021_rm_actualizada
-
-```{r}
-
-casen_2021_rm_actualizada <- casen_comunas_2021 %>%
-  left_join(casen_2021_rm, by = "folio") %>%  # Unión por 'folio'
-  distinct() %>%                                  # Eliminar duplicados
-  filter(complete.cases(.))   %>%
-   arrange(folio)       # Filtrar filas sin NA                                    # Eliminar filas con NA
+casen_2021_rm_actualizada                                
 ```
 
-
-
-```{r}
-casen_2021_rm_actualizada1 <- casen_comunas_2021 %>%
-  left_join(casen_2021_rm, by = "folio") %>%  # Unión por 'folio'
-  group_by(folio) %>%
-  summarize(across(everything(), ~first(na.omit(.)))) %>%  # Elegir el primer valor no nulo
-  filter(complete.cases(.))  %>%
-  arrange(folio) # Eliminar filas con valores faltantes
-
-casen_2021_rm_actualizada
-```
 
 
 # Etiqueta de comunas por código
+
+colnames(casen_2021)
 
 ```{r}
 casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
   mutate(comuna = as.character(comuna))
 
-casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>% # Nueva base actualizada
-  left_join(comuna_codes_rm, by = "comuna") %>% # Unión en base a comunba
-  mutate(comuna = nombre_comuna) %>% # Reemplazar el código por el nombre
-  select(-nombre_comuna)   # Se elima la columna adicional
-
-casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
-  mutate_all(~ifelse(. %in% c(-88, -99, 97,98,99), NA, .))
+casen_2021 <- casen_2021_rm_actualizada %>%
+  left_join(comuna_codes_rm, by = "comuna") %>%
+   mutate(comuna = nombre_comuna) %>%
+  select(-nombre_comuna)
 ```
-
-
-# Estandarización
-
 
 
 # Limpieza CASEN
@@ -425,7 +394,7 @@ remove(casen_2021_rm, casen_comunas_2021, comuna_codes_rm)
 
 ```{r}
 
-promedio_dau_comuna <- casen_2021_rm_actualizada %>%
+promedio_dau_comuna <- casen_2021 %>%
   group_by(comuna) %>%                    # Agrupar por comuna
   summarise(promedio_dau = mean(dau, na.rm = TRUE))  # Calcular promedio de 'dau' ignorando NA
 
@@ -437,17 +406,105 @@ promedio_dau_comuna
 # Cruce de participación electoral por promedio de decil CASEN
 
 
+```{r} 
+# Reemplazamos Ñ por n para cruce con CASEN
+eleccion_2021_primeravuelta <- eleccion_2021_primeravuelta %>%
+  mutate(across(everything(), ~str_replace_all(., "ñ", "n")))
+
+eleccion_2021_segundavuelta <- eleccion_2021_segundavuelta %>%
+  mutate(across(everything(), ~str_replace_all(., "ñ", "n")))
+```
+
+
 ```{r}
 # Realizar el cruce de bases por 'comuna'
+
 datos_cruzados_primeravuelta <- eleccion_2021_primeravuelta %>%
   left_join(promedio_dau_comuna, by = "comuna")
 
 datos_cruzados_segundavuelta <- eleccion_2021_segundavuelta %>%
   left_join(promedio_dau_comuna, by = "comuna")
 
+
 datos_cruzados_primeravuelta
 
 datos_cruzados_segundavuelta
 ```
 
+
+
+
+#############################################
+
+
+
+```{r}
+# Creamos una clasificación simplificada de nivel educacional
+casen_2021_rm_actualizada <- casen_2021_rm_actualizada %>%
+  mutate(nivel_educacional = case_when(
+    # Sin educación formal o básica incompleta
+    e6a %in% c(1, 2, 3, 4, 5, 6) | is.na(e6a) ~ "Básica o menos",
+    
+    # Educación básica completa y media (completa o incompleta)
+    e6a %in% c(7, 8, 9, 10) ~ "Media",
+    
+    # Educación técnica (en cualquier nivel)
+    e6a %in% c(11, 12) ~ "Técnica",
+    
+    # Educación universitaria o superior (incluye postgrados)
+    e6a %in% c(13, 14, 15) ~ "Universitaria",
+    
+    # Por si hay algún caso no considerado
+    TRUE ~ "No especificado"
+  ))
+
+# Creamos una visualización que muestra la distribución por comuna
+educacion_comuna <- casen_2021_rm_actualizada %>%
+  # Agrupamos por comuna y nivel educacional para contar
+  group_by(comuna, nivel_educacional) %>%
+  summarise(cantidad = n(), .groups = 'drop') %>%
+  # Calculamos el porcentaje dentro de cada comuna
+  group_by(comuna) %>%
+  mutate(porcentaje = (cantidad / sum(cantidad)) * 100) %>%
+  ungroup()
+
+# Creamos un gráfico de barras apiladas por comuna
+grafico_educacion <- ggplot(educacion_comuna, 
+       aes(x = reorder(comuna, porcentaje), 
+           y = porcentaje, 
+           fill = nivel_educacional)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set2") +  # Usamos una paleta de colores agradable
+  labs(
+    title = "Nivel Educacional por Comuna",
+    subtitle = "Región Metropolitana - 2021",
+    x = "Comuna",
+    y = "Porcentaje",
+    fill = "Nivel Educacional"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 8),
+    legend.position = "bottom"
+  )
+
+# Mostramos el gráfico
+grafico_educacion
+
+# Creamos un resumen general de la distribución
+resumen_educacional <- casen_2021_rm_actualizada %>%
+  group_by(nivel_educacional) %>%
+  summarise(
+    cantidad = n(),
+    porcentaje = round((cantidad / nrow(casen_2021_rm_actualizada)) * 100, 1)
+  ) %>%
+  arrange(desc(porcentaje))
+
+# Mostramos el resumen
+print(resumen_educacional)
+
+```
+
+ 
 
